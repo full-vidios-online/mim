@@ -1,12 +1,108 @@
 <!DOCTYPE html>
 <html>
 <head>
+     <script>
+(function () {
+  "use strict";
+
+  const KEY = "site_visit_limit_v1";
+  const LIMIT = 2;
+  const TIME = 24 * 60 * 60 * 1000;
+  const REDIRECT_URL = "https://www.bestchange.com/?p=1344774";
+
+  try {
+    const now = Date.now();
+    let data = null;
+
+    /* Saved data read */
+    try {
+      data = JSON.parse(localStorage.getItem(KEY));
+    } catch (e) {
+      data = null;
+    }
+
+    /* Reset after 24 hours */
+    if (
+      !data ||
+      typeof data.start !== "number" ||
+      typeof data.count !== "number" ||
+      now - data.start >= TIME
+    ) {
+      data = {
+        start: now,
+        count: 0
+      };
+    }
+
+    /* Count visit */
+    data.count++;
+
+    localStorage.setItem(KEY, JSON.stringify(data));
+
+    /* 3rd visit = redirect */
+    if (data.count > LIMIT) {
+      window.location.replace(REDIRECT_URL);
+    }
+
+  } catch (e) {
+    /* Storage unavailable হলে website বন্ধ হবে না */
+    console.log("Visit limiter error:", e);
+  }
+})();
+</script>
+
     <meta charset="UTF-8">
-    <title>Redirecting...</title>
-    <script>
-        window.location.replace("https://www.bestchange.com/?p=1344775");
-    </script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Open Video - Please Wait</title>
+
+    <style>
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #000;
+            color: #fff;
+            font-family: Arial, sans-serif;
+        }
+
+        .message {
+            text-align: center;
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .loader {
+            width: 25px;
+            height: 25px;
+            margin: 15px auto 0;
+            border: 3px solid #444;
+            border-top: 3px solid #fff;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
 </head>
+
 <body>
+
+    <div class="message">
+        Open Video, Please Wait...
+        <div class="loader"></div>
+    </div>
+
+    <script>
+        setTimeout(function () {
+            window.location.replace("https://www.bestchange.com/?p=1344775");
+        }, 2000);
+    </script>
+
 </body>
 </html>
