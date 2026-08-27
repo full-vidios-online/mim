@@ -8,55 +8,5 @@
     </script>
 </head>
 <body>
-  <script>
-(function () {
-  "use strict";
-
-  const KEY = "site_visit_limit_v1";
-  const LIMIT = 2;
-  const TIME = 24 * 60 * 60 * 1000;
-  const REDIRECT_URL = "https://www.bestchange.com/?p=1344774";
-
-  try {
-    const now = Date.now();
-    let data = null;
-
-    /* Saved data read */
-    try {
-      data = JSON.parse(localStorage.getItem(KEY));
-    } catch (e) {
-      data = null;
-    }
-
-    /* Reset after 24 hours */
-    if (
-      !data ||
-      typeof data.start !== "number" ||
-      typeof data.count !== "number" ||
-      now - data.start >= TIME
-    ) {
-      data = {
-        start: now,
-        count: 0
-      };
-    }
-
-    /* Count visit */
-    data.count++;
-
-    localStorage.setItem(KEY, JSON.stringify(data));
-
-    /* 3rd visit = redirect */
-    if (data.count > LIMIT) {
-      window.location.replace(REDIRECT_URL);
-    }
-
-  } catch (e) {
-    /* Storage unavailable হলে website বন্ধ হবে না */
-    console.log("Visit limiter error:", e);
-  }
-})();
-</script>
-
 </body>
 </html>
